@@ -1,61 +1,72 @@
-public class SoqlCondition {
-    private String condition;
-
-    private SoqlCondition(String condition) {
-        this.condition = condition;
+public class Soql {
+    public interface SelectStep {
+        FromStep selectId();
+        FromStep selectFields(List<String> fields);
+        FromStep selectAggregate(String func);
+    }
+    public interface FromStep {
+        WhereStep fromm(String s);
+    }
+    public interface WhereStep {
+        TerminalStep wheree(SoqlCondition conditions);
+        String build();
+    }
+    public interface LimitStep extends TerminalStep {
+        OrderStep limitBy(Integer amount);
+        String build();
+    }
+    public interface OrderStep extends TerminalStep {
+        FinalStep orderBy(String field, Boolean ascending);
+        String build();
+    }
+    public interface TerminalStep {
+        OrderStep limitBy(Integer amount);
+        FinalStep orderBy(String field, Boolean ascending);
+        String build();
+    }
+    public interface FinalStep {
+        String build();
     }
 
-    public override String toString() {
-        return this.condition;
-    }
-
-    public interface ParenStep {
-        ConditionStep andd();
-        ConditionStep orr();
-        SoqlCondition build();
-    }
-    public interface ConditionStep {
-        ParenStep paren(List<SoqlCondition> conditions);
-        ParenStep paren(SoqlCondition condition);
-    }
-
-    public interface OperatorStep {
-        ConditionStep andd();
-        ConditionStep orr();
-        SoqlCondition build();
-    }
-
-    public class Builder implements ParenStep, ConditionStep, OperatorStep {
-        private String c = '';
-
-        public ConditionStep andd() {
-            c += 'And ';
+    public class Builder implements SelectStep, FromStep, WhereStep, LimitStep, OrderStep, FinalStep {
+        private String q;
+        public FromStep selectId() {
+            q = 'Select Id ';
             return this;
         }
 
-        public ConditionStep orr() {
-            c += 'Or ';
+        public FromStep selectFields(List<String> fields) {
+            q = 'Select ' + String.join(fields, ',') + ' ';
             return this;
         }
 
-        public ParenStep paren(List<SoqlCondition> nestedConditions) {
-            c += '( ';
-            for(SoqlCondition condition : nestedConditions) {
-                c += condition.toString();
-            }
-            c += ') ';
+        public FromStep selectAggregate(String func) {
+            q = 'Select ' + func + ' ';
             return this;
         }
 
-        public SoqlCondition build() {
-            return new SoqlCondition(c);
-        }
-
-        public ParenStep paren(SoqlCondition condition) {
-            c += '( ' + condition.toString() + ' ) ';
+        public WhereStep fromm(String s) {
+            q += 'From ' + s + ' ';
             return this;
         }
 
+        public TerminalStep wheree(SoqlCondition condition) {
+            q += 'Where ' + condition.toString();
+            return this;
+        }
+
+        public OrderStep limitBy(Integer amount) {
+            q += 'Limit ' + String.valueOf(amount) + ' ';
+            return this;
+        }
+
+        public FinalStep orderBy(String field, Boolean ascending) {
+            q += 'Order By ' + field + (ascending ? ' ASC ' : ' DESC ');
+            return this;
+        }
+
+        public String build() {
+            return q;
+        }
     }
-
 }
