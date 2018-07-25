@@ -207,7 +207,7 @@ public class SoqlCondition {
         }
 
         public OperatorStep eq(String a, Id b) {
-            c += a + ' = ' + b + ' ';
+            c += a + ' = ' + '\'' + String.valueOf(b) + '\'' + ' ';
             return this;
         }
 
@@ -262,7 +262,7 @@ public class SoqlCondition {
         }
 
         public OperatorStep neq(String a, Id b) {
-            c += a + ' != ' + b + ' ';
+            c += a + ' != ' + '\'' + String.valueOf(b) + '\'' + ' ';
             return this;
         }
 
@@ -311,6 +311,11 @@ public class SoqlCondition {
             return this;
         }
 
+        public OperatorStep le(String a, Id b) {
+            c += a + ' <= ' + '\'' + String.valueOf(b) + '\'' + ' ';
+            return this;
+        }
+
         public OperatorStep le(String a, Integer b) {
             c += a + ' <= ' + b + ' ';
             return this;
@@ -348,6 +353,11 @@ public class SoqlCondition {
 
         public OperatorStep lt(String a, Double b) {
             c += a + ' < ' + b + ' ';
+            return this;
+        }
+
+        public OperatorStep lt(String a, Id b) {
+            c += a + ' < ' + '\'' + String.valueOf(b) + '\'' + ' ';
             return this;
         }
 
@@ -391,6 +401,11 @@ public class SoqlCondition {
             return this;
         }
 
+        public OperatorStep gt(String a, Id b) {
+            c += a + ' > ' + '\'' + String.valueOf(b) + '\'' + ' ';
+            return this;
+        }
+
         public OperatorStep gt(String a, Integer b) {
             c += a + ' > ' + b + ' ';
             return this;
@@ -428,6 +443,11 @@ public class SoqlCondition {
 
         public OperatorStep ge(String a, Double b) {
             c += a + ' >= ' + b + ' ';
+            return this;
+        }
+
+        public OperatorStep ge(String a, Id b) {
+            c += a + ' >= ' + '\'' + String.valueOf(b) + '\'' + ' ';
             return this;
         }
 

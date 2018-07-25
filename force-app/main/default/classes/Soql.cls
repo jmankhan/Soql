@@ -1,4 +1,12 @@
 public class Soql {
+    private String q;
+    private Soql(String q) {
+        this.q = q;
+    }
+
+    public override String toString() {
+        return this.q;
+    }
     public interface SelectStep {
         FromStep selectId();
         FromStep selectFields(List<String> fields);
@@ -9,23 +17,25 @@ public class Soql {
     }
     public interface WhereStep {
         TerminalStep wheree(SoqlCondition conditions);
-        String build();
+        OrderStep limitBy(Integer amount);
+        FinalStep orderBy(String field, Boolean ascending);
+        Soql build();
     }
     public interface LimitStep extends TerminalStep {
         OrderStep limitBy(Integer amount);
-        String build();
+        Soql build();
     }
     public interface OrderStep extends TerminalStep {
         FinalStep orderBy(String field, Boolean ascending);
-        String build();
+        Soql build();
     }
     public interface TerminalStep {
         OrderStep limitBy(Integer amount);
         FinalStep orderBy(String field, Boolean ascending);
-        String build();
+        Soql build();
     }
     public interface FinalStep {
-        String build();
+        Soql build();
     }
 
     public class Builder implements SelectStep, FromStep, WhereStep, LimitStep, OrderStep, FinalStep {
@@ -65,8 +75,8 @@ public class Soql {
             return this;
         }
 
-        public String build() {
-            return q;
+        public Soql build() {
+            return new Soql(q);
         }
     }
 }

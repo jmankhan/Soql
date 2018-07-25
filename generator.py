@@ -8,7 +8,7 @@ operators = ['eq', 'neq', 'le', 'lt', 'gt', 'ge', 'inn', 'ninn', 'inc', 'exc']
 data_types = ['Boolean', 'Date', 'Datetime', 'Decimal', 'Double', 'Id', 'Integer', 'Long', 'Object', 'String', 'Time']
 operator_map = {'eq' : '=', 'neq' : '!=', 'lt' : '<', 'le' : '<=', 'gt' : '>', 'ge' : '>=', 'likee' : 'LIKE', 'inn' : 'IN', 'ninn' : 'NOT IN', 'inc' : 'INCLUDES', 'exc' : 'EXCLUDES'}
 list_operators = ['inn', 'ninn', 'inc', 'exc']
-restricted_types = ['Boolean', 'Id', 'Object']
+restricted_types = ['Boolean', 'Object']
 restricted_operators = ['eq', 'neq']
 numeric_types = ['Decimal', 'Double', 'Integer', 'Long']
 
