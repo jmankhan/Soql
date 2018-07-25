@@ -1,10 +1,8 @@
 @IsTest
 private class SoqlConditionTest {
-
     @TestSetup
     private static void setup() {
-        Account a = new Account(Name='Bob');
-        insert a;
+        getAccounts('Test', 1, 0);
     }
 
 	@IsTest
@@ -393,4 +391,99 @@ private class SoqlConditionTest {
         System.assertEquals('Name = \'Test\' OR ( Name = \'Test2\'  ) ', result);
     }
 
+    /*************** Integration Tests ***************/
+    @IsTest
+    private static void testDBExecuteSimple() {
+        Account a = new Account(Name = 'Test2');
+        insert a;
+
+        List<Account> accounts = [SELECT Name FROM Account];
+        String condition = new SoqlCondition.Builder().eq('Name', 'Test2').build().toString();
+        String q = 'SELECT Name FROM ACCOUNT WHERE ' + condition;
+
+        List<Account> result = Database.query(q);
+
+        System.assert(!result.isEmpty());
+        System.assertEquals(1, result.size());
+        System.assertEquals('Test2', result[0].Name);
+    }
+
+    @IsTest
+    private static void testDBExecuteSimpleChain() {
+        List<Account> data = getAccounts('Test', 2, 1);
+
+        String condition1 = new SoqlCondition.Builder()
+                .eq('Name', data[0].Name).andd()
+                .eq('NumberOfEmployees', data[0].NumberOfEmployees)
+                .build().toString();
+        String condition2 = new SoqlCondition.Builder()
+                .eq('Name', data[1].Name).andd()
+                .eq('NumberOfEmployees', data[1].NumberOfEmployees)
+                .build().toString();
+
+        String base = 'SELECT Name FROM Account WHERE ';
+
+        List<Account> result = Database.query(base + condition1);
+        List<Account> result2 = Database.query(base + condition2);
+
+        System.assert(!result.isEmpty());
+        System.assertEquals(1, result.size());
+        System.assertEquals(data[0].Name, result[0].Name);
+
+        System.assert(!result2.isEmpty());
+        System.assertEquals(1, result2.size());
+        System.assertEquals(data[1].Name, result2[0].Name);
+    }
+
+    @IsTest
+    private static void testDBExecuteMedium() {
+        List<Account> data = getAccounts('Test', 9, 1);
+
+        String condition = new SoqlCondition.Builder()
+                .paren(
+                        new SoqlCondition.Builder()
+                        .eq('Name', data[0].Name).andd()
+                        .eq('NumberOfEmployees', data[0].NumberOfEmployees).build()
+                ).orr()
+                .eq('Name', data[1].Name).orr()
+                .paren(
+                        new SoqlCondition.Builder()
+                        .eq('NumberOfEmployees', data[2].NumberOfEmployees).andd()
+                        .eq('Name', data[2].Name).build()
+                ).build().toString();
+
+        String base = 'SELECT Name, NumberOfEmployees FROM Account WHERE ';
+        List<Account> result = Database.query(base + condition);
+
+        System.assert(!result.isEmpty());
+        System.assertEquals(3, result.size());
+        Boolean contains0 = false, contains1 = false, contains2 = false;
+        for(Account r : result) {
+            if(r.Name == data[0].Name && r.NumberOfEmployees == data[0].NumberOfEmployees) {
+                contains0 = true;
+            }
+            if(r.Name == data[1].Name) {
+                contains1 = true;
+            }
+            if(r.Name == data[2].Name && r.NumberOfEmployees == data[2].NumberOfEmployees) {
+                contains2 = true;
+            }
+        }
+        System.assert(contains0, 'Missing match for 1st condition');
+        System.assert(contains1, 'Missing match for 2nd condition');
+        System.assert(contains2, 'Missing match for 3rd condition');
+    }
+
+    /************** Helper methods **************/
+    private static List<Account> getAccounts(String name, Integer amount, Integer offset) {
+        List<Account> accounts = new List<Account>();
+        for(Integer i=0; i<amount; i++) {
+            accounts.add(new Account(
+                    Name = name + String.valueOf(i + offset),
+                    NumberOfEmployees = Integer.valueOf(10 * Math.random())
+            ));
+        }
+        insert accounts;
+        return accounts;
+    }
 }

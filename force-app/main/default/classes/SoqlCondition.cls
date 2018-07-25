@@ -16,7 +16,7 @@ public class SoqlCondition {
     }
 
     public interface ConditionStep {
-        ParenStep paren(List<SoqlCondition> conditions);
+//        ParenStep paren(List<SoqlCondition> conditions);
         ParenStep paren(SoqlCondition condition);
 
         OperatorStep eq(String a, Boolean b);
