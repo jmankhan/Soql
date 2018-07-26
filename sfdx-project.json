@@ -2,10 +2,12 @@
   "packageDirectories": [
     {
       "path": "force-app",
+      "versionName": "version 1.0",
+      "versionNumber": "1.0.0",
       "default": true
     }
   ],
-  "namespace": "",
+  "namespace": "soqlutils",
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "43.0"
 }
