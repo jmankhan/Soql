@@ -4,7 +4,7 @@ private class SoqlTest {
     private static void testSimple() {
         Account acc = getAccounts('Test', 1)[0];
         Soql q = new Soql.Builder()
-                .selectId()
+                .selectField('Name')
                 .fromm('Account')
                 .wheree(
                         new SoqlCondition.Builder().eq('Id', acc.Id).build()
@@ -13,7 +13,38 @@ private class SoqlTest {
 
         System.assert(!result.isEmpty());
         System.assertEquals(1, result.size());
-        System.assertEquals(acc.Id, result[0].Id);
+        System.assertEquals(acc.Name, result[0].Name);
+    }
+
+    @IsTest
+    private static void testMedium() {
+        List<Account> accounts = getAccounts('Test', 5);
+        Soql q = new Soql.Builder()
+                .selectId()
+                .fromm('Account')
+                .wheree(
+                        new SoqlCondition.Builder()
+                                .eq('Id', accounts[0].Id).orr()
+                                .eq('Id', accounts[1].Id).build()
+                ).limitBy(1).build();
+
+        List<Account> result = Database.query(q.toString());
+        System.assert(!result.isEmpty());
+        System.assertEquals(1, result.size());
+        System.assert(accounts[0].Id == result[0].Id || accounts[1].Id == result[0].Id);
+    }
+
+    @IsTest
+    private static void testExecute() {
+        Account a = getAccounts('Test', 1)[0];
+        List<Account> result = new Soql.Builder()
+                .selectId()
+                .fromm('Account')
+                .limitBy(1)
+                .build().execute();
+
+        System.assert(!result.isEmpty());
+        System.assertEquals(a.Id, result[0].Id);
     }
 
     @IsTest
@@ -52,6 +83,23 @@ private class SoqlTest {
             System.assertEquals(sorted[i], result[i].Name);
             System.assertEquals(rev[i], result2[i].Name);
         }
+    }
+
+    @IsTest
+    private static void testQueryLocator() {
+        List<Account> accounts = getAccounts('Test', 5);
+        Soql q = new Soql.Builder()
+                .selectId()
+                .fromm('Account')
+                .build();
+
+        Database.QueryLocatorIterator it = q.getQueryLocator().iterator();
+        Integer resultSize = 0;
+        while(it.hasNext()) {
+            it.next();
+            resultSize++;
+        }
+        System.assertEquals(accounts.size(), resultSize);
     }
 
     /************** Helper methods **************/

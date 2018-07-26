@@ -1,3 +1,20 @@
+/**
+ *  This file is part of Soql.
+
+    Soql is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Soql is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Soql.  If not, see <https://www.gnu.org/licenses/>.
+
+ */
 public class SoqlCondition {
     private String condition;
 
@@ -311,11 +328,6 @@ public class SoqlCondition {
             return this;
         }
 
-        public OperatorStep le(String a, Id b) {
-            c += a + ' <= ' + '\'' + String.valueOf(b) + '\'' + ' ';
-            return this;
-        }
-
         public OperatorStep le(String a, Integer b) {
             c += a + ' <= ' + b + ' ';
             return this;
@@ -353,11 +365,6 @@ public class SoqlCondition {
 
         public OperatorStep lt(String a, Double b) {
             c += a + ' < ' + b + ' ';
-            return this;
-        }
-
-        public OperatorStep lt(String a, Id b) {
-            c += a + ' < ' + '\'' + String.valueOf(b) + '\'' + ' ';
             return this;
         }
 
@@ -401,11 +408,6 @@ public class SoqlCondition {
             return this;
         }
 
-        public OperatorStep gt(String a, Id b) {
-            c += a + ' > ' + '\'' + String.valueOf(b) + '\'' + ' ';
-            return this;
-        }
-
         public OperatorStep gt(String a, Integer b) {
             c += a + ' > ' + b + ' ';
             return this;
@@ -443,11 +445,6 @@ public class SoqlCondition {
 
         public OperatorStep ge(String a, Double b) {
             c += a + ' >= ' + b + ' ';
-            return this;
-        }
-
-        public OperatorStep ge(String a, Id b) {
-            c += a + ' >= ' + '\'' + String.valueOf(b) + '\'' + ' ';
             return this;
         }
 
